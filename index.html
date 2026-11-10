@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Fit Tracker</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#151f30;--panel2:#1c2940;--muted:#a9b5c8;--accent:#7cdb9a;--line:#2a3850}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101c2e,#090f1b 65%);color:#f5f7fb;font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:24px 18px 14px;max-width:760px;margin:auto}h1{margin:8px 0 4px;font-size:30px}h2{font-size:20px;margin:0 0 12px}.muted{color:var(--muted);font-size:13px}
+main{max-width:760px;margin:auto;padding:0 14px 40px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 8px 24px #0002}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--panel2);border-radius:13px;padding:13px}.big{font-size:26px;font-weight:750;color:var(--accent)}
+button,select{font:inherit;border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:12px;padding:10px 12px}
+button.primary{background:var(--accent);color:#102017;border:0;font-weight:700}button:active{transform:scale(.98)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.days button{padding:9px 2px;font-size:13px}.days button.active{background:var(--accent);color:#102017;font-weight:700}
+.task{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}.task input{width:21px;height:21px;accent-color:var(--accent)}.task .desc{flex:1}.task small{display:block;color:var(--muted);margin-top:3px}
+.bar{height:9px;background:#2a3850;border-radius:20px;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button.active{border-color:var(--accent);color:var(--accent)}
+.exercise{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.timer{font-size:32px;font-weight:750;text-align:center;margin:12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(min-width:600px){header{padding-top:32px}main{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="muted">YOUR PERSONAL STRENGTH COMPANION</div>
+ <h1>💪 FIT TRACKER</h1>
+ <div class="muted">Build strength steadily. Recover well. Track your progress.</div>
+</header>
+<main>
+ <section class="panel">
+  <div class="row"><h2>Weekly dashboard</h2><span class="muted" id="todayLabel"></span></div>
+  <div class="stats">
+   <div class="stat"><div class="big" id="percent">0%</div><div class="muted">Today's completion</div></div>
+   <div class="stat"><div class="big" id="count">0/0</div><div class="muted">Tasks completed</div></div>
+  </div>
+  <div class="bar"><span id="progress"></span></div>
+ </section>
+ <section class="panel">
+  <div class="row"><h2>Choose your day</h2><span class="muted">Weekly plan</span></div>
+  <div class="days" id="days"></div>
+ </section>
+ <section class="panel">
+  <div class="row"><h2>☀️ Morning session</h2><span class="muted">Easy-to-moderate</span></div>
+  <p class="muted">Warm up gently. Complete one controlled round. Stop if you feel pain.</p>
+  <div id="morning"></div>
+ </section>
+ <section class="panel">
+  <div class="row"><h2>🌙 Evening session</h2><span class="muted" id="eveningType"></span></div>
+  <p class="muted" id="eveningNote"></p>
+  <div id="evening"></div>
+ </section>
+ <section class="panel">
+  <h2>⏱️ Rest timer</h2><div class="timer" id="timer">01:00</div>
+  <div class="row" style="justify-content:center"><button id="minus">−15s</button><button class="primary" id="start">Start</button><button id="plus">+15s</button><button id="reset">Reset</button></div>
+ </section>
+ <section class="panel">
+  <h2>📈 Your progress</h2>
+  <div class="stats">
+   <div class="stat"><div class="big" id="streak">0</div><div class="muted">Active days this week</div></div>
+   <div class="stat"><div class="big" id="pushups">0</div><div class="muted">Push-ups logged</div></div>
+  </div>
+  <p class="muted">Log push-ups you complete with good form. Quality matters more than a high number.</p>
+  <div class="row"><button id="logPush">+ Log 1 push-up</button><button id="resetWeek">Reset this week's log</button></div>
+ </section>
+ <section class="panel">
+  <h2>📚 Exercise guide</h2>
+  <div class="exercise"><div><b>Bent-knee raises</b><div class="muted">Lie on your back, bend knees, gently bring them toward your chest.</div></div></div>
+  <div class="exercise"><div><b>Wall push-ups</b><div class="muted">Hands on wall, body straight; bend elbows and press away.</div></div></div>
+  <div class="exercise"><div><b>Dead bugs</b><div class="muted">On your back, move opposite arm and leg slowly while keeping your back comfortable.</div></div></div>
+  <div class="exercise"><div><b>Bird dogs</b><div class="muted">On hands and knees, extend opposite arm and leg without twisting.</div></div></div>
+  <div class="exercise"><div><b>Reverse lunges</b><div class="muted">Step one foot back, bend both knees gently, then return upright.</div></div></div>
+ </section>
+ <section class="panel">
+  <h2>⭐ Healthy habits</h2>
+  <div class="muted">☑ Eat regular, balanced meals<br>☑ Drink water throughout the day<br>☑ Aim for 8–10 hours of sleep<br>☑ Take rest days and enjoy sport<br>☑ Don't train through pain or exhaustion</div>
+ </section>
+ <footer>Progress is saved on this device. This plan supports general strength, not a particular body shape. Ask a trusted adult or qualified coach if an exercise feels uncomfortable.</footer>
+</main>
+<script>
+const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const morning=[
+ ["Marching in place","45 seconds"],["Bodyweight squats","10 reps"],["Wall push-ups","8 reps"],["Reverse lunges","5 each leg"],["Forearm plank","15 seconds"],["Dead bugs","6 each side"],["Bent-knee raises","6 reps"],["Bird dogs","6 each side"]
+];
+const strength=[
+ ["Wall or incline push-ups","2 × 8"],["Knee push-ups (optional)","1 × 5, only if comfortable"],["Glute bridges","2 × 10"],["Reverse crunches","2 × 6"],["Forearm plank","2 × 15 seconds"],["Bodyweight squats","2 × 10"],["Bird dogs","2 × 6 each side"]
+];
+const recovery=[["Comfortable walk","10 minutes"],["Gentle stretching","5 minutes"],["Easy shoulder and hip mobility","3 minutes"]];
+const weekend=[["Football or enjoyable activity","As comfortable"],["Gentle stretching","5 minutes"]];
+const keyDate=()=>{const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`};
+let selected=days[(new Date().getDay()+6)%7], data=JSON.parse(localStorage.getItem("fitTracker")||"{}"), seconds=60, interval=null;
+function save(){localStorage.setItem("fitTracker",JSON.stringify(data))}
+function checked(id){return !!data.checks?.[id]}
+function toggle(id,val){data.checks=data.checks||{};data.checks[id]=val;save();render()}
+function tasksFor(day,slot){if(slot==="am")return morning;return ["Monday","Wednesday","Friday"].includes(day)?strength:["Saturday","Sunday"].includes(day)?weekend:recovery}
+function taskHTML(day,slot,items){return items.map((x,i)=>{let id=`${day}-${slot}-${i}`;return `<label class="task"><input type="checkbox" data-id="${id}" ${checked(id)?"checked":""}><span class="desc">${x[0]}<small>${x[1]}</small></span></label>`}).join("")}
+function render(){
+ document.getElementById("todayLabel").textContent=keyDate();
+ document.getElementById("days").innerHTML=days.map(d=>`<button class="${d===selected?"active":""}" data-day="${d}">${d.slice(0,3)}</button>`).join("");
+ document.getElementById("morning").innerHTML=taskHTML(selected,"am",morning);
+ let isStrength=["Monday","Wednesday","Friday"].includes(selected),isWeekend=["Saturday","Sunday"].includes(selected);
+ let e=isStrength?strength:isWeekend?weekend:recovery;
+ document.getElementById("evening").innerHTML=taskHTML(selected,"pm",e);
+ document.getElementById("eveningType").textContent=isStrength?"Strength":isWeekend?"Recovery / sport":"Recovery";
+ document.getElementById("eveningNote").textContent=isStrength?"Take 60–90 seconds of rest between sets. Keep every rep controlled.":isWeekend?"Enjoy movement and let your muscles recover.":"Keep this session light; no hard strength workout today.";
+ let all=[...morning.map((_,i)=>`${selected}-am-${i}`),...e.map((_,i)=>`${selected}-pm-${i}`)];
+ let n=all.filter(checked).length,p=Math.round(n/all.length*100);
+ document.getElementById("percent").textContent=p+"%";document.getElementById("count").textContent=n+"/"+all.length;document.getElementById("progress").style.width=p+"%";
+ let weekCount=days.filter(d=>{let ids=[...morning.map((_,i)=>`${d}-am-${i}`),...tasksFor(d,"pm").map((_,i)=>`${d}-pm-${i}`)];return ids.some(checked)}).length;
+ document.getElementById("streak").textContent=weekCount;document.getElementById("pushups").textContent=data.pushups||0;
+}
+document.addEventListener("click",e=>{if(e.target.dataset.day){selected=e.target.dataset.day;render()}});
+document.addEventListener("change",e=>{if(e.target.dataset.id)toggle(e.target.dataset.id,e.target.checked)});
+document.getElementById("logPush").onclick=()=>{data.pushups=(data.pushups||0)+1;save();render()};
+document.getElementById("resetWeek").onclick=()=>{if(confirm("Reset all workout checkmarks and this week's push-up log?")){data={};save();render()}};
+function showTimer(){document.getElementById("timer").textContent=`${String(Math.floor(seconds/60)).padStart(2,"0")}:${String(seconds%60).padStart(2,"0")}`}
+document.getElementById("plus").onclick=()=>{seconds+=15;showTimer()};
+document.getElementById("minus").onclick=()=>{seconds=Math.max(0,seconds-15);showTimer()};
+document.getElementById("reset").onclick=()=>{clearInterval(interval);interval=null;seconds=60;document.getElementById("start").textContent="Start";showTimer()};
+document.getElementById("start").onclick=()=>{if(interval){clearInterval(interval);interval=null;document.getElementById("start").textContent="Start";return}document.getElementById("start").textContent="Pause";interval=setInterval(()=>{seconds=Math.max(0,seconds-1);showTimer();if(seconds===0){clearInterval(interval);interval=null;document.getElementById("start").textContent="Start";}},1000)};
+showTimer();render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>
